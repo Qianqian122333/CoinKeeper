@@ -15,23 +15,24 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(uuid())
-  clerkUserId String? @unique
-  email     String   @unique
-  name      String?
+  id    String     @id @default(uuid())
+  clerkId String     @unique
+  email String  @unique
+  name  String?
   imageUrl String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  transactions Transaction[]
+  Records Record[]
 }
 
-model Transaction {
-  id        String   @id @default(uuid())
-  text    String
-  amount    Float
-  // relation to user
+model Record {
+  id    String     @id @default(uuid())
+  text     String
+  amount  Float
+  category String @default("other")
+  date DateTime @default(now())
   userId String
-  user      User     @relation(fields: [userId], references: [clerkUserId], onDelete: Cascade)
+  user   User     @relation(fields: [userId], references: [clerkId], onDelete: Cascade)
   createdAt DateTime @default(now())
   @@index([userId])
 }
