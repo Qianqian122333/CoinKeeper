@@ -1,6 +1,6 @@
 "use client";
 
-import { use } from "react";
+import { use, useState } from "react";
 import {
   PieChart,
   Pie,
@@ -10,6 +10,13 @@ import {
   Legend,
 } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface ExpenseRecord {
   id: string;
@@ -55,6 +62,7 @@ interface RecordChartProps {
 
 const RecordChart = ({ recordsPromise }: RecordChartProps) => {
   const result = use(recordsPromise);
+  const [selectedMonth, setSelectedMonth] = useState("all");
 
   if (result.error) {
     return (
@@ -71,14 +79,55 @@ const RecordChart = ({ recordsPromise }: RecordChartProps) => {
 
   const records = result.records || [];
 
-  if (records.length === 0) {
+  // 生成可用的月份选项（从记录中提取）
+  const availableMonths = Array.from(
+    new Set(
+      records.map((record) => {
+        const date = new Date(record.date);
+        return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
+      })
+    )
+  ).sort((a, b) => b.localeCompare(a)); // 降序排列，最新的月份在前
+
+  // 根据月份筛选记录
+  const filteredRecords = records.filter((record) => {
+    if (selectedMonth === "all") return true;
+    const recordMonth = (() => {
+      const date = new Date(record.date);
+      return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
+    })();
+    return recordMonth === selectedMonth;
+  });
+
+  // 格式化月份显示
+  const formatMonthLabel = (monthValue: string) => {
+    const [year, month] = monthValue.split("-");
+    return `${year}年${parseInt(month)}月`;
+  };
+
+  if (filteredRecords.length === 0) {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>支出分析</CardTitle>
+          <div className="flex justify-between items-center gap-3 flex-wrap">
+            <CardTitle>支出分析</CardTitle>
+            <Select value={selectedMonth} onValueChange={setSelectedMonth}>
+              <SelectTrigger className="w-[140px]">
+                <SelectValue placeholder="选择月份" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">全部月份</SelectItem>
+                {availableMonths.map((month) => (
+                  <SelectItem key={month} value={month}>
+                    {formatMonthLabel(month)}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
         </CardHeader>
         <CardContent className="flex justify-center items-center h-64">
-          <p className="text-gray-500">暂无数据</p>
+          <p className="text-gray-500">该月份暂无数据</p>
         </CardContent>
       </Card>
     );
@@ -89,7 +138,7 @@ const RecordChart = ({ recordsPromise }: RecordChartProps) => {
     [key: string]: { total: number; count: number };
   } = {};
 
-  records.forEach((record: ExpenseRecord) => {
+  filteredRecords.forEach((record: ExpenseRecord) => {
     const category = record.category || "other";
     if (!categoryData[category]) {
       categoryData[category] = { total: 0, count: 0 };
@@ -114,10 +163,27 @@ const RecordChart = ({ recordsPromise }: RecordChartProps) => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>支出分析</CardTitle>
-        <p className="text-sm text-gray-600">
-          总支出: ¥{totalAmount.toFixed(2)}
-        </p>
+        <div className="flex justify-between items-center gap-3 flex-wrap">
+          <div>
+            <CardTitle>支出分析</CardTitle>
+            <p className="text-sm text-muted-foreground mt-1">
+              总支出: ¥{totalAmount.toFixed(2)}
+            </p>
+          </div>
+          <Select value={selectedMonth} onValueChange={setSelectedMonth}>
+            <SelectTrigger className="w-[140px]">
+              <SelectValue placeholder="选择月份" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">全部月份</SelectItem>
+              {availableMonths.map((month) => (
+                <SelectItem key={month} value={month}>
+                  {formatMonthLabel(month)}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
       </CardHeader>
       <CardContent>
         <ResponsiveContainer width="100%" height={400}>
