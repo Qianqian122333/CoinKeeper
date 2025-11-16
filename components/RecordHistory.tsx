@@ -84,11 +84,35 @@ const RecordHistory = ({ recordsPromise }: RecordHistoryProps) => {
 
   const allRecords = result.records || [];
 
-  // 根据类别筛选记录
-  const filteredRecords =
-    selectedCategory === "all"
-      ? allRecords
-      : allRecords.filter((record) => record.category === selectedCategory);
+  // 生成可用的月份选项（从记录中提取）
+  const availableMonths = Array.from(
+    new Set(
+      allRecords.map((record) => {
+        const date = new Date(record.date);
+        return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(
+          2,
+          "0"
+        )}`;
+      })
+    )
+  ).sort((a, b) => b.localeCompare(a)); // 降序排列，最新的月份在前
+
+  // 根据类别和月份筛选记录
+  const filteredRecords = allRecords.filter((record) => {
+    const matchCategory =
+      selectedCategory === "all" || record.category === selectedCategory;
+
+    const recordMonth = (() => {
+      const date = new Date(record.date);
+      return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(
+        2,
+        "0"
+      )}`;
+    })();
+    const matchMonth = selectedMonth === "all" || recordMonth === selectedMonth;
+
+    return matchCategory && matchMonth;
+  });
 
   // 计算分页
   const totalPages = Math.ceil(filteredRecords.length / ITEMS_PER_PAGE);
@@ -100,6 +124,17 @@ const RecordHistory = ({ recordsPromise }: RecordHistoryProps) => {
   const handleCategoryChange = (value: string) => {
     setSelectedCategory(value);
     setCurrentPage(1);
+  };
+
+  const handleMonthChange = (value: string) => {
+    setSelectedMonth(value);
+    setCurrentPage(1);
+  };
+
+  // 格式化月份显示
+  const formatMonthLabel = (monthValue: string) => {
+    const [year, month] = monthValue.split("-");
+    return `${year}年${parseInt(month)}月`;
   };
 
   // 删除记录
@@ -150,22 +185,40 @@ const RecordHistory = ({ recordsPromise }: RecordHistoryProps) => {
   return (
     <Card>
       <CardHeader>
-        <div className="flex justify-between items-center">
+        <div className="flex justify-between items-center gap-3 flex-wrap">
           <CardTitle>支出记录</CardTitle>
-          <Select value={selectedCategory} onValueChange={handleCategoryChange}>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="选择类别" />
-            </SelectTrigger>
-            <SelectContent>
-              {CATEGORIES.map((category) => (
-                <SelectItem key={category.value} value={category.value}>
-                  {category.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <div className="flex gap-2">
+            <Select
+              value={selectedCategory}
+              onValueChange={handleCategoryChange}
+            >
+              <SelectTrigger className="w-[140px]">
+                <SelectValue placeholder="选择类别" />
+              </SelectTrigger>
+              <SelectContent>
+                {CATEGORIES.map((category) => (
+                  <SelectItem key={category.value} value={category.value}>
+                    {category.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Select value={selectedMonth} onValueChange={handleMonthChange}>
+              <SelectTrigger className="w-[140px]">
+                <SelectValue placeholder="选择月份" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">全部月份</SelectItem>
+                {availableMonths.map((month) => (
+                  <SelectItem key={month} value={month}>
+                    {formatMonthLabel(month)}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
         </div>
-        <p className="text-sm text-gray-600">
+        <p className="text-sm text-muted-foreground">
           共 {filteredRecords.length} 条记录
         </p>
       </CardHeader>
