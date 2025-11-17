@@ -102,7 +102,12 @@ const AddNewRecord = () => {
         toast.error(result.error);
       } else {
         toast.success("支出记录保存成功！");
-        reset(); // 成功后重置表单
+        reset({
+          text: "",
+          category: undefined,
+          amount: 0,
+          date: undefined,
+        }); // 明确重置所有字段
       }
     } catch (err) {
       console.error("提交过程中发生错误:", err);
@@ -181,10 +186,14 @@ const AddNewRecord = () => {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>支出类别</FormLabel>
-                <Select onValueChange={field.onChange} value={field.value}>
+                <Select
+                  onValueChange={field.onChange}
+                  value={field.value}
+                  key={field.value || "empty"}
+                >
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder="选择一个类别" />
+                      <SelectValue placeholder="请选择支出类别" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>

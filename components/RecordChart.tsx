@@ -84,7 +84,10 @@ const RecordChart = ({ recordsPromise }: RecordChartProps) => {
     new Set(
       records.map((record) => {
         const date = new Date(record.date);
-        return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
+        return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(
+          2,
+          "0"
+        )}`;
       })
     )
   ).sort((a, b) => b.localeCompare(a)); // 降序排列，最新的月份在前
@@ -94,7 +97,10 @@ const RecordChart = ({ recordsPromise }: RecordChartProps) => {
     if (selectedMonth === "all") return true;
     const recordMonth = (() => {
       const date = new Date(record.date);
-      return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
+      return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(
+        2,
+        "0"
+      )}`;
     })();
     return recordMonth === selectedMonth;
   });

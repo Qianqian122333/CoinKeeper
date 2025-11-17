@@ -1,6 +1,5 @@
 import AddNewRecord from "@/components/AddNewRecord";
 import AIInsights from "@/components/AIInsights";
-import ExpenseStates from "@/components/ExpenseStates";
 import Guest from "@/components/Guest";
 import RecordChart from "@/components/RecordChart";
 import RecordHistory from "@/components/RecordHistory";
@@ -20,7 +19,6 @@ const HomePage = async () => {
       <Welcome />
       <AddNewRecord />
       <RecordChart recordsPromise={recordsPromise} />
-      <ExpenseStates />
       <AIInsights />
       <RecordHistory recordsPromise={recordsPromise} />
     </main>
