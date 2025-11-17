@@ -12,7 +12,8 @@ import {
 } from "@/components/ui/select";
 import { deleteRecord } from "@/app/actions/deleteRecord";
 import { toast } from "react-hot-toast";
-import { Trash2, ChevronLeft, ChevronRight } from "lucide-react";
+import { Trash2, ChevronLeft, ChevronRight, Pencil } from "lucide-react";
+import UpdateRecord from "@/components/UpdateRecord";
 
 interface ExpenseRecord {
   id: string;
@@ -68,6 +69,9 @@ const RecordHistory = ({ recordsPromise }: RecordHistoryProps) => {
   const [selectedMonth, setSelectedMonth] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [editingRecord, setEditingRecord] = useState<ExpenseRecord | null>(
+    null
+  );
 
   if (result.error) {
     return (
@@ -258,19 +262,29 @@ const RecordHistory = ({ recordsPromise }: RecordHistoryProps) => {
                     >
                       ¥{Math.abs(record.amount).toFixed(2)}
                     </span>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => handleDelete(record.id)}
-                      disabled={deletingId === record.id}
-                      className="hover:bg-red-50 hover:text-red-500"
-                    >
-                      {deletingId === record.id ? (
-                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-red-500"></div>
-                      ) : (
-                        <Trash2 className="h-4 w-4" />
-                      )}
-                    </Button>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => setEditingRecord(record)}
+                        className="hover:bg-blue-50 hover:text-blue-500"
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleDelete(record.id)}
+                        disabled={deletingId === record.id}
+                        className="hover:bg-red-50 hover:text-red-500"
+                      >
+                        {deletingId === record.id ? (
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-red-500"></div>
+                        ) : (
+                          <Trash2 className="h-4 w-4" />
+                        )}
+                      </Button>
+                    </div>
                   </div>
                 </div>
               ))}
@@ -309,6 +323,15 @@ const RecordHistory = ({ recordsPromise }: RecordHistoryProps) => {
           </>
         )}
       </CardContent>
+
+      {/* 编辑对话框 */}
+      {editingRecord && (
+        <UpdateRecord
+          record={editingRecord}
+          open={!!editingRecord}
+          onOpenChange={(open) => !open && setEditingRecord(null)}
+        />
+      )}
     </Card>
   );
 };
