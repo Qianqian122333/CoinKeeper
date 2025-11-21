@@ -13,6 +13,7 @@ import toast from "react-hot-toast"; // 假设您使用 react-hot-toast 进行�
 // 假设这些是您已导入的 Shadcn UI 组件
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Form,
   FormControl,
@@ -116,146 +117,151 @@ const AddNewRecord = () => {
   }
 
   return (
-    <div className="p-6 max-w-lg mx-auto border rounded-lg shadow-lg">
-      <h2 className="text-2xl font-bold mb-4">添加新的支出记录</h2>
-
-      <Form {...form}>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-          {/* --- 字段 1: 支出描述 (text) --- */}
-          <FormField
-            control={form.control}
-            name="text"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>支出描述</FormLabel>
-                <FormControl>
-                  <Input placeholder="输入商品或服务的名称" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          {/* --- 字段 2: 支出日期 (date) - 日历选择器 --- */}
-          <FormField
-            control={form.control}
-            name="date"
-            render={({ field }) => (
-              <FormItem className="flex flex-col">
-                <FormLabel>支出日期</FormLabel>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <FormControl>
-                      <Button
-                        variant={"outline"}
-                        className={cn(
-                          "w-full justify-start text-left font-normal",
-                          !field.value && "text-muted-foreground"
-                        )}
-                      >
-                        <CalendarIcon className="mr-2 h-4 w-4" />
-                        {field.value ? (
-                          format(field.value, "PPP")
-                        ) : (
-                          <span>选择日期</span>
-                        )}
-                      </Button>
-                    </FormControl>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
-                    <Calendar
-                      mode="single"
-                      selected={field.value}
-                      onSelect={field.onChange}
-                      disabled={(date) =>
-                        date > new Date() || date < new Date("1900-01-01")
-                      }
-                      initialFocus
-                    />
-                  </PopoverContent>
-                </Popover>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          {/* --- 字段 3: 类别 (category) - 下拉菜单 --- */}
-          <FormField
-            control={form.control}
-            name="category"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>支出类别</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  value={field.value}
-                  key={field.value || "empty"}
-                >
+    <Card>
+      <CardHeader>
+        <CardTitle>添加新的支出记录</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <Form {...form}>
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+            {/* --- 字段 1: 支出描述 (text) --- */}
+            <FormField
+              control={form.control}
+              name="text"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>支出描述</FormLabel>
                   <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="请选择支出类别" />
-                    </SelectTrigger>
+                    <Input placeholder="输入商品或服务的名称" {...field} />
                   </FormControl>
-                  <SelectContent>
-                    {CATEGORIES.map((category) => (
-                      <SelectItem key={category.value} value={category.value}>
-                        {category.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          {/* --- 字段 4: 金额 (amount) - 数字输入 --- */}
-          <FormField
-            control={form.control}
-            name="amount"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>金额 (¥)</FormLabel>
-                <FormControl>
-                  <Input
-                    type="number"
-                    step="1"
-                    placeholder="10"
-                    min="1"
-                    name={field.name}
-                    onBlur={field.onBlur}
-                    ref={field.ref}
-                    onChange={(e) => {
-                      const rawValue = e.target.value;
-                      if (rawValue === "") {
-                        field.onChange(undefined);
-                      } else {
-                        const intValue = parseInt(rawValue, 10);
-                        field.onChange(
-                          isNaN(intValue) || intValue < 1 ? undefined : intValue
-                        );
+            {/* --- 字段 2: 支出日期 (date) - 日历选择器 --- */}
+            <FormField
+              control={form.control}
+              name="date"
+              render={({ field }) => (
+                <FormItem className="flex flex-col">
+                  <FormLabel>支出日期</FormLabel>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        <Button
+                          variant={"outline"}
+                          className={cn(
+                            "w-full justify-start text-left font-normal",
+                            !field.value && "text-muted-foreground"
+                          )}
+                        >
+                          <CalendarIcon className="mr-2 h-4 w-4" />
+                          {field.value ? (
+                            format(field.value, "PPP")
+                          ) : (
+                            <span>选择日期</span>
+                          )}
+                        </Button>
+                      </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={field.value}
+                        onSelect={field.onChange}
+                        disabled={(date) =>
+                          date > new Date() || date < new Date("1900-01-01")
+                        }
+                        initialFocus
+                      />
+                    </PopoverContent>
+                  </Popover>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* --- 字段 3: 类别 (category) - 下拉菜单 --- */}
+            <FormField
+              control={form.control}
+              name="category"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>支出类别</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    value={field.value}
+                    key={field.value || "empty"}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="请选择支出类别" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {CATEGORIES.map((category) => (
+                        <SelectItem key={category.value} value={category.value}>
+                          {category.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* --- 字段 4: 金额 (amount) - 数字输入 --- */}
+            <FormField
+              control={form.control}
+              name="amount"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>金额 (¥)</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      step="1"
+                      placeholder="10"
+                      min="1"
+                      name={field.name}
+                      onBlur={field.onBlur}
+                      ref={field.ref}
+                      onChange={(e) => {
+                        const rawValue = e.target.value;
+                        if (rawValue === "") {
+                          field.onChange(undefined);
+                        } else {
+                          const intValue = parseInt(rawValue, 10);
+                          field.onChange(
+                            isNaN(intValue) || intValue < 1
+                              ? undefined
+                              : intValue
+                          );
+                        }
+                      }}
+                      value={
+                        field.value === undefined || field.value === 0
+                          ? ""
+                          : field.value
                       }
-                    }}
-                    value={
-                      field.value === undefined || field.value === 0
-                        ? ""
-                        : field.value
-                    }
-                  />
-                </FormControl>
-                <FormDescription>输入本次支出的准确金额。</FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+                    />
+                  </FormControl>
+                  <FormDescription>输入本次支出的准确金额。</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          {/* --- 提交按钮 --- */}
-          <Button type="submit" className="w-full" disabled={isSubmitting}>
-            {isSubmitting ? "保存中..." : "保存记录"}
-          </Button>
-        </form>
-      </Form>
-    </div>
+            {/* --- 提交按钮 --- */}
+            <Button type="submit" className="w-full" disabled={isSubmitting}>
+              {isSubmitting ? "保存中..." : "保存记录"}
+            </Button>
+          </form>
+        </Form>
+      </CardContent>
+    </Card>
   );
 };
 

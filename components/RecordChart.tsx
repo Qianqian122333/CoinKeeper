@@ -192,37 +192,39 @@ const RecordChart = ({ recordsPromise }: RecordChartProps) => {
         </div>
       </CardHeader>
       <CardContent>
-        <ResponsiveContainer width="100%" height={400}>
-          <PieChart>
-            <Pie
-              data={chartData}
-              cx="50%"
-              cy="50%"
-              labelLine={false}
-              label={({ name, percent }) =>
-                `${name}: ${percent ? (percent * 100).toFixed(1) : 0}%`
-              }
-              outerRadius={120}
-              fill="#8884d8"
-              dataKey="value"
-            >
-              {chartData.map((entry, index) => (
-                <Cell
-                  key={`cell-${index}`}
-                  fill={CATEGORY_COLORS[entry.category] || "#82CA9D"}
-                />
-              ))}
-            </Pie>
-            <Tooltip
-              formatter={(value: number, name: string) => [
-                `¥${value.toFixed(2)}`,
-                name,
-              ]}
-              labelFormatter={(label: string) => `类别: ${label}`}
-            />
-            <Legend />
-          </PieChart>
-        </ResponsiveContainer>
+        <div className="w-full h-[400px]">
+          <ResponsiveContainer width="100%" height="100%">
+            <PieChart>
+              <Pie
+                data={chartData}
+                cx="50%"
+                cy="50%"
+                labelLine={false}
+                label={({ name, percent }) =>
+                  `${name}: ${percent ? (percent * 100).toFixed(1) : 0}%`
+                }
+                outerRadius={120}
+                fill="#8884d8"
+                dataKey="value"
+              >
+                {chartData.map((entry, index) => (
+                  <Cell
+                    key={`cell-${index}`}
+                    fill={CATEGORY_COLORS[entry.category] || "#82CA9D"}
+                  />
+                ))}
+              </Pie>
+              <Tooltip
+                formatter={(value: number, name: string) => [
+                  `¥${value.toFixed(2)}`,
+                  name,
+                ]}
+                labelFormatter={(label: string) => `类别: ${label}`}
+              />
+              <Legend />
+            </PieChart>
+          </ResponsiveContainer>
+        </div>
       </CardContent>
     </Card>
   );

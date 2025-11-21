@@ -1,5 +1,4 @@
 import AddNewRecord from "@/components/AddNewRecord";
-import AIInsights from "@/components/AIInsights";
 import Guest from "@/components/Guest";
 import RecordChart from "@/components/RecordChart";
 import RecordHistory from "@/components/RecordHistory";
@@ -15,12 +14,25 @@ const HomePage = async () => {
   const recordsPromise = getRecords();
 
   return (
-    <main>
-      <Welcome />
-      <AddNewRecord />
-      <RecordChart recordsPromise={recordsPromise} />
-      <AIInsights />
-      <RecordHistory recordsPromise={recordsPromise} />
+    <main className="container mx-auto px-4 py-6 max-w-7xl">
+      {/* 桌面端: 左右布局，移动端: 垂直堆叠 */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* 左侧列 */}
+        <div className="space-y-6">
+          <Welcome />
+          <AddNewRecord />
+        </div>
+
+        {/* 右侧列 - 支出分析 */}
+        <div>
+          <RecordChart recordsPromise={recordsPromise} />
+        </div>
+      </div>
+
+      {/* 底部全宽 */}
+      <div className="mt-6">
+        <RecordHistory recordsPromise={recordsPromise} />
+      </div>
     </main>
   );
 };
