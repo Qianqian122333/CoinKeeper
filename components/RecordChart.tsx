@@ -167,7 +167,7 @@ const RecordChart = ({ recordsPromise }: RecordChartProps) => {
   const totalAmount = chartData.reduce((sum, item) => sum + item.value, 0);
 
   return (
-    <Card>
+    <Card className="h-full flex flex-col">
       <CardHeader>
         <div className="flex justify-between items-center gap-3 flex-wrap">
           <div>
@@ -191,8 +191,8 @@ const RecordChart = ({ recordsPromise }: RecordChartProps) => {
           </Select>
         </div>
       </CardHeader>
-      <CardContent>
-        <div className="w-full h-[400px]">
+      <CardContent className="flex-1 flex items-center">
+        <div className="w-full" style={{ height: '100%', minHeight: '300px' }}>
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie

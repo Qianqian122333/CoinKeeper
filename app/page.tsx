@@ -16,7 +16,7 @@ const HomePage = async () => {
   return (
     <main className="container mx-auto px-4 py-6 max-w-7xl">
       {/* 桌面端: 左右布局，移动端: 垂直堆叠 */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:grid-rows-1">
         {/* 左侧列 */}
         <div className="space-y-6">
           <Welcome />
@@ -24,9 +24,7 @@ const HomePage = async () => {
         </div>
 
         {/* 右侧列 - 支出分析 */}
-        <div>
-          <RecordChart recordsPromise={recordsPromise} />
-        </div>
+        <RecordChart recordsPromise={recordsPromise} />
       </div>
 
       {/* 底部全宽 */}
