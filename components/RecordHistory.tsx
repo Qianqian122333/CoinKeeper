@@ -139,7 +139,10 @@ const RecordHistory = ({ recordsPromise }: RecordHistoryProps) => {
   const formatMonthLabel = (monthValue: string) => {
     const [year, month] = monthValue.split("-");
     const date = new Date(parseInt(year), parseInt(month) - 1);
-    return date.toLocaleDateString("en-US", { year: "numeric", month: "long" });
+    return date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+    });
   };
 
   // Delete record
@@ -241,10 +244,10 @@ const RecordHistory = ({ recordsPromise }: RecordHistoryProps) => {
                   className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
                 >
                   <div className="flex-1">
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2 flex-wrap">
                       <h3 className="font-medium">{record.text}</h3>
                       <span
-                        className="text-xs px-2 py-1 rounded text-white font-medium"
+                        className="text-[10px] px-1.5 py-0.5 rounded text-white font-medium whitespace-nowrap"
                         style={{
                           backgroundColor:
                             CATEGORY_COLORS[record.category] || "#82CA9D",

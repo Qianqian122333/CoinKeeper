@@ -109,7 +109,10 @@ const RecordChart = ({ recordsPromise }: RecordChartProps) => {
   const formatMonthLabel = (monthValue: string) => {
     const [year, month] = monthValue.split("-");
     const date = new Date(parseInt(year), parseInt(month) - 1);
-    return date.toLocaleDateString("en-US", { year: "numeric", month: "long" });
+    return date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+    });
   };
 
   if (filteredRecords.length === 0) {
