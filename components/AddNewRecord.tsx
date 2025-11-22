@@ -38,33 +38,33 @@ import {
 } from "@/components/ui/popover";
 import { addExpenseRecord } from "@/app/actions/addExpenseRecord";
 
-// --- 分类选项 (保持不变) ---
+// --- Category Options ---
 const CATEGORIES = [
-  { label: "食品饮料", value: "food" },
-  { label: "交通出行", value: "transport" },
-  { label: "住房租金", value: "housing" },
-  { label: "娱乐休闲", value: "entertainment" },
-  { label: "账单/费用", value: "bills" },
-  { label: "其他", value: "other" },
+  { label: "Food & Drinks", value: "food" },
+  { label: "Transportation", value: "transport" },
+  { label: "Housing", value: "housing" },
+  { label: "Entertainment", value: "entertainment" },
+  { label: "Bills & Utilities", value: "bills" },
+  { label: "Other", value: "other" },
 ] as const;
 
-// --- 表单验证 Schema (Zod) ---
+// --- Form Validation Schema (Zod) ---
 const formSchema = z.object({
-  // 保持字段名与您的 Server Action 期望的键名一致，这里是 'text', 'amount', 'category', 'date'
+  // Keep field names consistent with your Server Action expectations: 'text', 'amount', 'category', 'date'
   text: z.string().min(1, {
-    message: "描述至少需要 1 个字符。",
+    message: "Description must be at least 1 character.",
   }),
 
   date: z.date({
-    message: "请选择一个支出日期。",
+    message: "Please select an expense date.",
   }),
 
   category: z.enum(CATEGORIES.map((c) => c.value) as [string, ...string[]], {
-    message: "请选择一个支出类别。",
+    message: "Please select an expense category.",
   }),
 
   amount: z.number().min(0.01, {
-    message: "金额必须大于 0。",
+    message: "Amount must be greater than 0.",
   }),
 });
 
@@ -98,54 +98,59 @@ const AddNewRecord = () => {
       // 2. 调用 Action/API 函数
       const result = await addExpenseRecord(dataToSubmit);
 
-      // 3. 处理结果和反馈
+      // 3. Handle result and feedback
       if (result.error) {
         toast.error(result.error);
       } else {
-        toast.success("支出记录保存成功！");
+        toast.success("Expense record saved successfully!");
         reset({
           text: "",
           category: undefined,
           amount: 0,
           date: undefined,
-        }); // 明确重置所有字段
+        }); // Explicitly reset all fields
       }
     } catch (err) {
-      console.error("提交过程中发生错误:", err);
-      toast.error("提交失败，请检查网络连接或稍后重试。");
+      console.error("Error during submission:", err);
+      toast.error(
+        "Submission failed, please check your network connection or try again later."
+      );
     }
   }
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>添加新的支出记录</CardTitle>
+        <CardTitle>Add New Expense Record</CardTitle>
       </CardHeader>
       <CardContent>
         <Form {...form}>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-            {/* --- 字段 1: 支出描述 (text) --- */}
+            {/* --- Field 1: Expense Description (text) --- */}
             <FormField
               control={form.control}
               name="text"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>支出描述</FormLabel>
+                  <FormLabel>Expense Description</FormLabel>
                   <FormControl>
-                    <Input placeholder="输入商品或服务的名称" {...field} />
+                    <Input
+                      placeholder="Enter item or service name"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
 
-            {/* --- 字段 2: 支出日期 (date) - 日历选择器 --- */}
+            {/* --- Field 2: Expense Date (date) - Calendar Picker --- */}
             <FormField
               control={form.control}
               name="date"
               render={({ field }) => (
                 <FormItem className="flex flex-col">
-                  <FormLabel>支出日期</FormLabel>
+                  <FormLabel>Expense Date</FormLabel>
                   <Popover>
                     <PopoverTrigger asChild>
                       <FormControl>
@@ -160,7 +165,7 @@ const AddNewRecord = () => {
                           {field.value ? (
                             format(field.value, "PPP")
                           ) : (
-                            <span>选择日期</span>
+                            <span>Pick a date</span>
                           )}
                         </Button>
                       </FormControl>
@@ -182,13 +187,13 @@ const AddNewRecord = () => {
               )}
             />
 
-            {/* --- 字段 3: 类别 (category) - 下拉菜单 --- */}
+            {/* --- Field 3: Category (category) - Dropdown Menu --- */}
             <FormField
               control={form.control}
               name="category"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>支出类别</FormLabel>
+                  <FormLabel>Expense Category</FormLabel>
                   <Select
                     onValueChange={field.onChange}
                     value={field.value}
@@ -196,7 +201,7 @@ const AddNewRecord = () => {
                   >
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="请选择支出类别" />
+                        <SelectValue placeholder="Select expense category" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -212,13 +217,13 @@ const AddNewRecord = () => {
               )}
             />
 
-            {/* --- 字段 4: 金额 (amount) - 数字输入 --- */}
+            {/* --- Field 4: Amount (amount) - Number Input --- */}
             <FormField
               control={form.control}
               name="amount"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>金额 (¥)</FormLabel>
+                  <FormLabel>Amount (£)</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
@@ -248,15 +253,17 @@ const AddNewRecord = () => {
                       }
                     />
                   </FormControl>
-                  <FormDescription>输入本次支出的准确金额。</FormDescription>
+                  <FormDescription>
+                    Enter the exact amount of this expense.
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
             />
 
-            {/* --- 提交按钮 --- */}
+            {/* --- Submit Button --- */}
             <Button type="submit" className="w-full" disabled={isSubmitting}>
-              {isSubmitting ? "保存中..." : "保存记录"}
+              {isSubmitting ? "Saving..." : "Save Record"}
             </Button>
           </form>
         </Form>

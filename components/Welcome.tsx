@@ -9,23 +9,23 @@ const Welcome = async () => {
 
   if (!user) return null;
 
-  // 获取当前时间并根据时段返回问候语
+  // Get greeting based on time of day
   const getGreeting = () => {
     const hour = new Date().getHours();
 
     if (hour >= 5 && hour < 12) {
-      return "早上好";
+      return "Good morning";
     } else if (hour >= 12 && hour < 18) {
-      return "下午好";
+      return "Good afternoon";
     } else if (hour >= 18 && hour < 22) {
-      return "晚上好";
+      return "Good evening";
     } else {
-      return "夜深了";
+      return "Good night";
     }
   };
 
   const greeting = getGreeting();
-  const userName = user.firstName || user.username || "用户";
+  const userName = user.firstName || user.username || "User";
   const avatarUrl = user.imageUrl;
 
   return (
@@ -54,13 +54,13 @@ const Welcome = async () => {
             </div>
           </div>
 
-          {/* 问候文字 */}
+          {/* Greeting Text */}
           <div className="flex-1">
             <h2 className="text-2xl font-bold">
-              {greeting}，{userName}！
+              {greeting}, {userName}!
             </h2>
             <p className="text-muted-foreground mt-1">
-              欢迎回来，开始管理您的财务吧 ✨
+              Welcome back, start managing your finances ✨
             </p>
           </div>
         </div>

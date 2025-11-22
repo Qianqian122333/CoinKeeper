@@ -30,25 +30,25 @@ interface RecordHistoryProps {
   }>;
 }
 
-// 类别选项
+// Category options
 const CATEGORIES = [
-  { label: "全部类别", value: "all" },
-  { label: "食品饮料", value: "food" },
-  { label: "交通出行", value: "transport" },
-  { label: "住房租金", value: "housing" },
-  { label: "娱乐休闲", value: "entertainment" },
-  { label: "账单/费用", value: "bills" },
-  { label: "其他", value: "other" },
+  { label: "All Categories", value: "all" },
+  { label: "Food & Drinks", value: "food" },
+  { label: "Transportation", value: "transport" },
+  { label: "Housing", value: "housing" },
+  { label: "Entertainment", value: "entertainment" },
+  { label: "Bills & Utilities", value: "bills" },
+  { label: "Other", value: "other" },
 ];
 
-// 类别中文映射
+// Category label mapping
 const CATEGORY_LABELS: { [key: string]: string } = {
-  food: "食品饮料",
-  transport: "交通出行",
-  housing: "住房租金",
-  entertainment: "娱乐休闲",
-  bills: "账单/费用",
-  other: "其他",
+  food: "Food & Drinks",
+  transport: "Transportation",
+  housing: "Housing",
+  entertainment: "Entertainment",
+  bills: "Bills & Utilities",
+  other: "Other",
 };
 
 // 类别颜色映射（与饼图颜色保持一致）
@@ -77,7 +77,7 @@ const RecordHistory = ({ recordsPromise }: RecordHistoryProps) => {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>支出记录</CardTitle>
+          <CardTitle>Expense Records</CardTitle>
         </CardHeader>
         <CardContent>
           <p className="text-red-500">{result.error}</p>
@@ -135,15 +135,16 @@ const RecordHistory = ({ recordsPromise }: RecordHistoryProps) => {
     setCurrentPage(1);
   };
 
-  // 格式化月份显示
+  // Format month display
   const formatMonthLabel = (monthValue: string) => {
     const [year, month] = monthValue.split("-");
-    return `${year}年${parseInt(month)}月`;
+    const date = new Date(parseInt(year), parseInt(month) - 1);
+    return date.toLocaleDateString("en-US", { year: "numeric", month: "long" });
   };
 
-  // 删除记录
+  // Delete record
   const handleDelete = async (recordId: string) => {
-    if (!confirm("确定要删除这条记录吗？")) {
+    if (!confirm("Are you sure you want to delete this record?")) {
       return;
     }
 
@@ -153,20 +154,20 @@ const RecordHistory = ({ recordsPromise }: RecordHistoryProps) => {
       if (result.error) {
         toast.error(result.error);
       } else {
-        toast.success("记录已删除");
+        toast.success("Record deleted");
       }
     } catch (error) {
-      console.error("删除记录时出错:", error);
-      toast.error("删除失败，请重试");
+      console.error("Error deleting record:", error);
+      toast.error("Delete failed, please try again");
     } finally {
       setDeletingId(null);
     }
   };
 
-  // 格式化日期
+  // Format date
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString("zh-CN", {
+    return date.toLocaleDateString("en-US", {
       year: "numeric",
       month: "2-digit",
       day: "2-digit",
@@ -177,10 +178,10 @@ const RecordHistory = ({ recordsPromise }: RecordHistoryProps) => {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>支出记录</CardTitle>
+          <CardTitle>Expense Records</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-gray-500 text-center py-8">暂无记录</p>
+          <p className="text-gray-500 text-center py-8">No records yet</p>
         </CardContent>
       </Card>
     );
@@ -190,14 +191,14 @@ const RecordHistory = ({ recordsPromise }: RecordHistoryProps) => {
     <Card>
       <CardHeader>
         <div className="flex justify-between items-center gap-3 flex-wrap">
-          <CardTitle>支出记录</CardTitle>
+          <CardTitle>Expense Records</CardTitle>
           <div className="flex gap-2">
             <Select
               value={selectedCategory}
               onValueChange={handleCategoryChange}
             >
               <SelectTrigger className="w-[140px]">
-                <SelectValue placeholder="选择类别" />
+                <SelectValue placeholder="Select category" />
               </SelectTrigger>
               <SelectContent>
                 {CATEGORIES.map((category) => (
@@ -209,10 +210,10 @@ const RecordHistory = ({ recordsPromise }: RecordHistoryProps) => {
             </Select>
             <Select value={selectedMonth} onValueChange={handleMonthChange}>
               <SelectTrigger className="w-[140px]">
-                <SelectValue placeholder="选择月份" />
+                <SelectValue placeholder="Select month" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">全部月份</SelectItem>
+                <SelectItem value="all">All Months</SelectItem>
                 {availableMonths.map((month) => (
                   <SelectItem key={month} value={month}>
                     {formatMonthLabel(month)}
@@ -223,12 +224,14 @@ const RecordHistory = ({ recordsPromise }: RecordHistoryProps) => {
           </div>
         </div>
         <p className="text-sm text-muted-foreground">
-          共 {filteredRecords.length} 条记录
+          Total {filteredRecords.length} records
         </p>
       </CardHeader>
       <CardContent>
         {currentRecords.length === 0 ? (
-          <p className="text-gray-500 text-center py-8">该类别暂无记录</p>
+          <p className="text-gray-500 text-center py-8">
+            No records in this category
+          </p>
         ) : (
           <>
             <div className="space-y-4">
@@ -260,7 +263,7 @@ const RecordHistory = ({ recordsPromise }: RecordHistoryProps) => {
                         record.amount < 0 ? "text-red-500" : "text-green-500"
                       }`}
                     >
-                      ¥{Math.abs(record.amount).toFixed(2)}
+                      £{Math.abs(record.amount).toFixed(2)}
                     </span>
                     <div className="flex items-center gap-2">
                       <Button
@@ -290,7 +293,7 @@ const RecordHistory = ({ recordsPromise }: RecordHistoryProps) => {
               ))}
             </div>
 
-            {/* 分页控制 */}
+            {/* Pagination */}
             {totalPages > 1 && (
               <div className="flex items-center justify-between mt-6 pt-4 border-t">
                 <Button
@@ -302,10 +305,10 @@ const RecordHistory = ({ recordsPromise }: RecordHistoryProps) => {
                   disabled={currentPage === 1}
                 >
                   <ChevronLeft className="h-4 w-4 mr-1" />
-                  上一页
+                  Previous
                 </Button>
                 <span className="text-sm text-gray-600">
-                  第 {currentPage} / {totalPages} 页
+                  Page {currentPage} / {totalPages}
                 </span>
                 <Button
                   variant="outline"
@@ -315,7 +318,7 @@ const RecordHistory = ({ recordsPromise }: RecordHistoryProps) => {
                   }
                   disabled={currentPage === totalPages}
                 >
-                  下一页
+                  Next
                   <ChevronRight className="h-4 w-4 ml-1" />
                 </Button>
               </div>
@@ -324,7 +327,7 @@ const RecordHistory = ({ recordsPromise }: RecordHistoryProps) => {
         )}
       </CardContent>
 
-      {/* 编辑对话框 */}
+      {/* Edit Dialog */}
       {editingRecord && (
         <UpdateRecord
           record={editingRecord}

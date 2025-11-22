@@ -33,14 +33,14 @@ interface ChartData {
   [key: string]: string | number;
 }
 
-// 类别中文映射
+// Category label mapping
 const CATEGORY_LABELS: { [key: string]: string } = {
-  food: "食品饮料",
-  transport: "交通出行",
-  housing: "住房租金",
-  entertainment: "娱乐休闲",
-  bills: "账单/费用",
-  other: "其他",
+  food: "Food & Drinks",
+  transport: "Transportation",
+  housing: "Housing",
+  entertainment: "Entertainment",
+  bills: "Bills & Utilities",
+  other: "Other",
 };
 
 // 类别颜色映射（固定每个类别的颜色）
@@ -68,7 +68,7 @@ const RecordChart = ({ recordsPromise }: RecordChartProps) => {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>支出分析</CardTitle>
+          <CardTitle>Expense Analysis</CardTitle>
         </CardHeader>
         <CardContent className="flex justify-center items-center h-64">
           <p className="text-red-500">{result.error}</p>
@@ -105,10 +105,11 @@ const RecordChart = ({ recordsPromise }: RecordChartProps) => {
     return recordMonth === selectedMonth;
   });
 
-  // 格式化月份显示
+  // Format month display
   const formatMonthLabel = (monthValue: string) => {
     const [year, month] = monthValue.split("-");
-    return `${year}年${parseInt(month)}月`;
+    const date = new Date(parseInt(year), parseInt(month) - 1);
+    return date.toLocaleDateString("en-US", { year: "numeric", month: "long" });
   };
 
   if (filteredRecords.length === 0) {
@@ -116,13 +117,13 @@ const RecordChart = ({ recordsPromise }: RecordChartProps) => {
       <Card>
         <CardHeader>
           <div className="flex justify-between items-center gap-3 flex-wrap">
-            <CardTitle>支出分析</CardTitle>
+            <CardTitle>Expense Analysis</CardTitle>
             <Select value={selectedMonth} onValueChange={setSelectedMonth}>
               <SelectTrigger className="w-[140px]">
-                <SelectValue placeholder="选择月份" />
+                <SelectValue placeholder="Select month" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">全部月份</SelectItem>
+                <SelectItem value="all">All Months</SelectItem>
                 {availableMonths.map((month) => (
                   <SelectItem key={month} value={month}>
                     {formatMonthLabel(month)}
@@ -133,7 +134,7 @@ const RecordChart = ({ recordsPromise }: RecordChartProps) => {
           </div>
         </CardHeader>
         <CardContent className="flex justify-center items-center h-64">
-          <p className="text-gray-500">该月份暂无数据</p>
+          <p className="text-gray-500">No data for this month</p>
         </CardContent>
       </Card>
     );
@@ -171,17 +172,17 @@ const RecordChart = ({ recordsPromise }: RecordChartProps) => {
       <CardHeader>
         <div className="flex justify-between items-center gap-3 flex-wrap">
           <div>
-            <CardTitle>支出分析</CardTitle>
+            <CardTitle>Expense Analysis</CardTitle>
             <p className="text-sm text-muted-foreground mt-1">
-              总支出: ¥{totalAmount.toFixed(2)}
+              Total Expenses: £{totalAmount.toFixed(2)}
             </p>
           </div>
           <Select value={selectedMonth} onValueChange={setSelectedMonth}>
             <SelectTrigger className="w-[140px]">
-              <SelectValue placeholder="选择月份" />
+              <SelectValue placeholder="Select month" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">全部月份</SelectItem>
+              <SelectItem value="all">All Months</SelectItem>
               {availableMonths.map((month) => (
                 <SelectItem key={month} value={month}>
                   {formatMonthLabel(month)}
@@ -192,7 +193,7 @@ const RecordChart = ({ recordsPromise }: RecordChartProps) => {
         </div>
       </CardHeader>
       <CardContent className="flex-1 flex items-center">
-        <div className="w-full" style={{ height: '100%', minHeight: '300px' }}>
+        <div className="w-full" style={{ height: "100%", minHeight: "300px" }}>
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie
@@ -216,10 +217,10 @@ const RecordChart = ({ recordsPromise }: RecordChartProps) => {
               </Pie>
               <Tooltip
                 formatter={(value: number, name: string) => [
-                  `¥${value.toFixed(2)}`,
+                  `£${value.toFixed(2)}`,
                   name,
                 ]}
-                labelFormatter={(label: string) => `类别: ${label}`}
+                labelFormatter={(label: string) => `Category: ${label}`}
               />
               <Legend />
             </PieChart>

@@ -43,28 +43,28 @@ interface UpdateRecordProps {
   onOpenChange: (open: boolean) => void;
 }
 
-// 分类选项
+// Category options
 const CATEGORIES = [
-  { label: "食品饮料", value: "food" },
-  { label: "交通出行", value: "transport" },
-  { label: "住房租金", value: "housing" },
-  { label: "娱乐休闲", value: "entertainment" },
-  { label: "账单/费用", value: "bills" },
-  { label: "其他", value: "other" },
+  { label: "Food & Drinks", value: "food" },
+  { label: "Transportation", value: "transport" },
+  { label: "Housing", value: "housing" },
+  { label: "Entertainment", value: "entertainment" },
+  { label: "Bills & Utilities", value: "bills" },
+  { label: "Other", value: "other" },
 ] as const;
 
-// 表单验证 Schema
+// Form validation Schema
 const formSchema = z.object({
   text: z.string().min(1, {
-    message: "描述至少需要 1 个字符。",
+    message: "Description must be at least 1 character.",
   }),
 
   category: z.enum(CATEGORIES.map((c) => c.value) as [string, ...string[]], {
-    message: "请选择一个支出类别。",
+    message: "Please select an expense category.",
   }),
 
   amount: z.number().min(0.01, {
-    message: "金额必须大于 0。",
+    message: "Amount must be greater than 0.",
   }),
 });
 
@@ -91,7 +91,7 @@ const UpdateRecord = ({ record, open, onOpenChange }: UpdateRecordProps) => {
     formState: { isSubmitting },
   } = form;
 
-  // 提交处理函数
+  // Submit handler
   async function onSubmit(values: EditFormValues) {
     try {
       const result = await editRecord({
@@ -102,12 +102,12 @@ const UpdateRecord = ({ record, open, onOpenChange }: UpdateRecordProps) => {
       if (result.error) {
         toast.error(result.error);
       } else {
-        toast.success("记录更新成功！");
+        toast.success("Record updated successfully!");
         onOpenChange(false);
       }
     } catch (err) {
-      console.error("更新记录时出错:", err);
-      toast.error("更新失败，请重试");
+      console.error("Error updating record:", err);
+      toast.error("Update failed, please try again");
     }
   }
 
@@ -115,33 +115,36 @@ const UpdateRecord = ({ record, open, onOpenChange }: UpdateRecordProps) => {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
-          <DialogTitle>编辑支出记录</DialogTitle>
+          <DialogTitle>Edit Expense Record</DialogTitle>
         </DialogHeader>
 
         <Form {...form}>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            {/* 支出描述 */}
+            {/* Expense Description */}
             <FormField
               control={form.control}
               name="text"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>支出描述</FormLabel>
+                  <FormLabel>Expense Description</FormLabel>
                   <FormControl>
-                    <Input placeholder="输入商品或服务的名称" {...field} />
+                    <Input
+                      placeholder="Enter item or service name"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
 
-            {/* 支出类别 */}
+            {/* Expense Category */}
             <FormField
               control={form.control}
               name="category"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>支出类别</FormLabel>
+                  <FormLabel>Expense Category</FormLabel>
                   <Select
                     onValueChange={field.onChange}
                     value={field.value}
@@ -149,7 +152,7 @@ const UpdateRecord = ({ record, open, onOpenChange }: UpdateRecordProps) => {
                   >
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="请选择支出类别" />
+                        <SelectValue placeholder="Select expense category" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -165,13 +168,13 @@ const UpdateRecord = ({ record, open, onOpenChange }: UpdateRecordProps) => {
               )}
             />
 
-            {/* 金额 */}
+            {/* Amount */}
             <FormField
               control={form.control}
               name="amount"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>金额 (¥)</FormLabel>
+                  <FormLabel>Amount (£)</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
@@ -198,7 +201,7 @@ const UpdateRecord = ({ record, open, onOpenChange }: UpdateRecordProps) => {
               )}
             />
 
-            {/* 提交按钮 */}
+            {/* Submit Button */}
             <div className="flex gap-3 pt-4">
               <Button
                 type="button"
@@ -207,10 +210,10 @@ const UpdateRecord = ({ record, open, onOpenChange }: UpdateRecordProps) => {
                 onClick={() => onOpenChange(false)}
                 disabled={isSubmitting}
               >
-                取消
+                Cancel
               </Button>
               <Button type="submit" className="flex-1" disabled={isSubmitting}>
-                {isSubmitting ? "保存中..." : "保存更改"}
+                {isSubmitting ? "Saving..." : "Save Changes"}
               </Button>
             </div>
           </form>
