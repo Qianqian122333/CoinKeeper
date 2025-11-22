@@ -63,8 +63,13 @@ const formSchema = z.object({
     message: "Please select an expense category.",
   }),
 
-  amount: z.number().min(0.01, {
+  amount: z.number().positive({
     message: "Amount must be greater than 0.",
+  }).refine((val) => {
+    // Check if it has at most 2 decimal places
+    return /^\d+(\.\d{1,2})?$/.test(val.toString());
+  }, {
+    message: "Amount can have at most 2 decimal places.",
   }),
 });
 
@@ -227,9 +232,9 @@ const AddNewRecord = () => {
                   <FormControl>
                     <Input
                       type="number"
-                      step="1"
-                      placeholder="10"
-                      min="1"
+                      step="0.01"
+                      placeholder="10.00"
+                      min="0.01"
                       name={field.name}
                       onBlur={field.onBlur}
                       ref={field.ref}
@@ -238,11 +243,11 @@ const AddNewRecord = () => {
                         if (rawValue === "") {
                           field.onChange(undefined);
                         } else {
-                          const intValue = parseInt(rawValue, 10);
+                          const floatValue = parseFloat(rawValue);
                           field.onChange(
-                            isNaN(intValue) || intValue < 1
+                            isNaN(floatValue) || floatValue <= 0
                               ? undefined
-                              : intValue
+                              : floatValue
                           );
                         }
                       }}
