@@ -63,14 +63,20 @@ const formSchema = z.object({
     message: "Please select an expense category.",
   }),
 
-  amount: z.number().positive({
-    message: "Amount must be greater than 0.",
-  }).refine((val) => {
-    // Check if it has at most 2 decimal places
-    return /^\d+(\.\d{1,2})?$/.test(val.toString());
-  }, {
-    message: "Amount can have at most 2 decimal places.",
-  }),
+  amount: z
+    .number()
+    .positive({
+      message: "Amount must be greater than 0.",
+    })
+    .refine(
+      (val) => {
+        // Check if it has at most 2 decimal places
+        return /^\d+(\.\d{1,2})?$/.test(val.toString());
+      },
+      {
+        message: "Amount can have at most 2 decimal places.",
+      }
+    ),
 });
 
 type EditFormValues = z.infer<typeof formSchema>;
